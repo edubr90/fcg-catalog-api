@@ -1,0 +1,12 @@
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\Catalog.Domain\bin\Debug\net8.0\Catalog.Domain.deps.json
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\Catalog.Domain\bin\Debug\net8.0\Catalog.Domain.dll
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\Catalog.Domain\bin\Debug\net8.0\Catalog.Domain.pdb
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\Catalog.Domain\obj\Debug\net8.0\Catalog.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\Catalog.Domain\obj\Debug\net8.0\Catalog.Domain.AssemblyInfoInputs.cache
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\Catalog.Domain\obj\Debug\net8.0\Catalog.Domain.AssemblyInfo.cs
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\Catalog.Domain\obj\Debug\net8.0\Catalog.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\Catalog.Domain\obj\Debug\net8.0\Catalog.Domain.sourcelink.json
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\Catalog.Domain\obj\Debug\net8.0\Catalog.Domain.dll
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\Catalog.Domain\obj\Debug\net8.0\refint\Catalog.Domain.dll
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\Catalog.Domain\obj\Debug\net8.0\Catalog.Domain.pdb
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\Catalog.Domain\obj\Debug\net8.0\ref\Catalog.Domain.dll
