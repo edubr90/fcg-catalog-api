@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatalogAPI.Controllers;
+
+[ApiController]
+[Route("api/games")]
 public class GamesController : Controller
 {
     private readonly IGameService _gameService;

@@ -126,3 +126,4 @@ C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\CatalogAPI\obj\Debug\
 C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\CatalogAPI\obj\Debug\net8.0\CatalogAPI.pdb
 C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\CatalogAPI\obj\Debug\net8.0\CatalogAPI.genruntimeconfig.cache
 C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\CatalogAPI\obj\Debug\net8.0\ref\CatalogAPI.dll
+C:\Users\Joao Eduardo\source\repos\FGC\fcg-catalog-api\src\CatalogAPI\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
