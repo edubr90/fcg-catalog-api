@@ -5,7 +5,7 @@ public class UserGame
 {
     public Guid UserId { get; private set; }
     public Guid GameId {  get; private set; }
-    public DateTime AcquireAt { get; private set; }
+    public DateTime AcquiredAt { get; private set; }
 
     public Game? Game { get; private set; }
 
@@ -15,7 +15,7 @@ public class UserGame
     {
         UserId = userId;
         GameId = gameId;
-        AcquireAt = DateTime.UtcNow;
+        AcquiredAt = DateTime.UtcNow;
     }
 
 

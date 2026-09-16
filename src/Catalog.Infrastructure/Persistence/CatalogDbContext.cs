@@ -27,7 +27,7 @@ public class CatalogDbContext : DbContext
         {
             b.HasKey(ug => new { ug.UserId, ug.GameId });
             b.HasOne(ug => ug.Game).WithMany().HasForeignKey(ug => ug.GameId);
-            b.Property(ug => ug.AcquireAt).IsRequired();
+            b.Property(ug => ug.AcquiredAt).IsRequired();
         });
     }
 }

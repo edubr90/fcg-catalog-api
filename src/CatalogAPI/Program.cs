@@ -1,17 +1,14 @@
-// "// Copyright (c) FIAP Cloud Games. All rights reserved."
-
-using System.Security.Cryptography.Xml;
 using System.Text;
-using Catalog.Application.Consumers;
+using Amazon.DynamoDBv2;
+using Amazon.SQS;
 using Catalog.Application.Interfaces;
 using Catalog.Application.Services;
 using Catalog.Domain.Interfaces;
+using Catalog.Infrastructure.Messaging;
 using Catalog.Infrastructure.Persistence;
 using Catalog.Infrastructure.Repositories;
 using Catalog.Infrastructure.UnitOfWork;
 using CatalogAPI.Middleware;
-using MassTransit;
-using MassTransit.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -19,7 +16,6 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddDbContext<CatalogDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -28,27 +24,20 @@ builder.Services.AddScoped<IUserGameRepository, UserGameRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IGameService, GameService>();
 
-builder.Services.AddMassTransit(x =>
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonSQS>();
+builder.Services.AddAWSService<IAmazonDynamoDB>();
+builder.Services.AddScoped<ISqsPublisher, SqsPublisher>();
+builder.Services.AddScoped<IGameReviewRepository, DynamoDbGameReviewRepository>();
+
+builder.Services.AddStackExchangeRedisCache(options =>
 {
-    x.AddConsumer<PaymentProcessedConsumer>();
-
-    x.UsingRabbitMq((ctx, cfg) =>
-    {
-        cfg.Host(builder.Configuration["RabbitMQ:Host"], builder.Configuration["RabbitMQ:vHost"] ?? "/", h =>
-        {
-            h.Username(builder.Configuration["RabbitMQ:UserName"] ?? "guest");
-            h.Password(builder.Configuration["RabbitMQ:Password"] ?? "guest");
-        });
-
-        cfg.ReceiveEndpoint("catalog-payment-processed", e =>
-        {
-            e.ConfigureConsumer<PaymentProcessedConsumer>(ctx);
-        });
-    });
+    options.Configuration = builder.Configuration["Redis:ConnectionString"] ?? "localhost:6379";
+    options.InstanceName = "fcg:";
 });
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT secretKey not configured.");
+var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured.");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -70,7 +59,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "FCG CatalogApi", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "FCG CatalogAPI", Version = "v1" });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -82,7 +71,10 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
             Array.Empty<string>()
         }
     });
