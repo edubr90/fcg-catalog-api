@@ -1,4 +1,5 @@
 using System.Text;
+using Amazon.CloudWatch;
 using Amazon.DynamoDBv2;
 using Amazon.SQS;
 using Catalog.Application.Interfaces;
@@ -30,6 +31,8 @@ builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddScoped<ISqsPublisher, SqsPublisher>();
 builder.Services.AddScoped<IGameReviewRepository, DynamoDbGameReviewRepository>();
 
+builder.Services.AddAWSService<IAmazonCloudWatch>();
+
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration["Redis:ConnectionString"] ?? "localhost:6379";
@@ -37,7 +40,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured.");
+var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -67,14 +70,10 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer",
         BearerFormat = "JWT"
     });
-
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-            },
+            new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
             Array.Empty<string>()
         }
     });
@@ -83,6 +82,7 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<MetricsMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FCG CatalogAPI v1"));
 app.UseAuthentication();
