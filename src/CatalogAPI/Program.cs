@@ -87,6 +87,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FCG CatalogAPI v1"));
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", service = "CatalogAPI" }));
 app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
