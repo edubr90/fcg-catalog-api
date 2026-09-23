@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using System.Text;
 using Amazon.CloudWatch;
 using Amazon.DynamoDBv2;
 using Amazon.SQS;
+using Catalog.Application.Consumers;
 using Catalog.Application.Interfaces;
 using Catalog.Application.Services;
 using Catalog.Domain.Interfaces;
@@ -9,6 +11,7 @@ using Catalog.Infrastructure.Messaging;
 using Catalog.Infrastructure.Persistence;
 using Catalog.Infrastructure.Repositories;
 using Catalog.Infrastructure.UnitOfWork;
+using Catalog.Infrastructure.Workers;
 using CatalogAPI.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +32,8 @@ builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonSQS>();
 builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddScoped<ISqsPublisher, SqsPublisher>();
+builder.Services.AddScoped<PaymentProcessedConsumer>();
+builder.Services.AddHostedService<SqsWorker>();
 builder.Services.AddScoped<IGameReviewRepository, DynamoDbGameReviewRepository>();
 
 builder.Services.AddAWSService<IAmazonCloudWatch>();
@@ -53,7 +58,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+            RoleClaimType = ClaimTypes.Role,
+            NameClaimType = ClaimTypes.NameIdentifier
         };
     });
 
